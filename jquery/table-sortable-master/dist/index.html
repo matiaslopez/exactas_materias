@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Table Sortable</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./bootstrap.min.css">
+    <link rel="stylesheet" href="./styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/public-google-sheets-parser@latest"></script>
+    <script src="./jquery.min.js"></script>
+</head>
+<body style="background-color: #1f6974;">
+<center><img src="http://exactas.uba.ar/wp-content/uploads/2015/07/exactas.png" width="50px" height="auto"></center>
+    <div class="page-container" >
+        <div class="container" style="background-color: #FFF;">
+            <br>
+            <h3>Aulas Segundo Cuatrimestre 2022</h3>
+<!--            <h5>A jquery plugin to sort and paginate data in table form</h5>-->
+<!--            <h6>-->
+<!--                <a href="story-latest.html">View full documentation</a>-->
+<!--            </h6>-->
+            <div class="row mt-5 mb-3 align-items-center">
+                <div class="col-md-5">
+                  <input type="text" class="form-control" placeholder="Buscar..." id="searchField">
+                </div>
+                <div class="col-md-2 text-right">
+                  <span class="pr-3">Cantidad de filas por página:</span>
+                </div>
+                <div class="col-md-2">
+                    <div class="d-flex justify-content-end">
+                        <select class="custom-select" name="rowsPerPage" id="changeRows">
+                            <option value="10">1</option>
+                            <option value="30" selected>30</option>
+                            <option value="100">100</option>
+                            <option value="1000">1000</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div id="root"></div>
+<!--            <div class="mt-4">-->
+<!--                <button class="btn btn-secondary" id="setPage2">Set Page 2</button>-->
+<!--            </div>-->
+            <br>
+        </div>
+    </div>
+<!--    <script src="./data.js"></script>-->
+    <script src="./data_sp_local.js"></script>
+    <script src="./table-sortable.js"></script>
+    <script>
+        // const spreadsheetId = '1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY#gid=793862221'
+        // https://docs.google.com/spreadsheets/d/1__20B99GvL0rxSEXQrIufYeGTYpCz6ypOx7dBTRm3YA/edit?usp=sharing
+        const spreadsheetId = '1__20B99GvL0rxSEXQrIufYeGTYpCz6ypOx7dBTRm3YA'
+        const parser = new PublicGoogleSheetsParser()
+        var data_sp = [];
+        parser.parse(spreadsheetId).then((items) => {
+          // items should be [{ a: 1, b: 2, c: 3 },{ a: 4, b: 5, c: 6 },{ a: 7, b: 8, c: 9 }]
+            console.log(items);
+            data_sp = items;
+
+            $.each(data_sp, function( index, value ) {
+                $.each(columns, function(id, va) {
+                    data_sp[index][va] = value[va] || "-"
+                })
+            });
+
+              var table = $('#root').tableSortable({
+                data: data_sp,
+                columns: columns,
+                searchField: '#searchField',
+                responsive: {
+                    1100: {
+                        columns: columns,
+                    },
+                },
+                sorting: true,
+                rowsPerPage: 30,
+                pagination: true,
+                tableWillMount: function() {
+                    console.log('table will mount')
+                },
+                tableDidMount: function() {
+                    console.log('table did mount')
+                },
+                tableWillUpdate: function() {console.log('table will update')},
+                tableDidUpdate: function() {console.log('table did update')},
+                tableWillUnmount: function() {console.log('table will unmount')},
+                tableDidUnmount: function() {console.log('table did unmount')},
+                onPaginationChange: function(nextPage, setPage) {
+                    setPage(nextPage);
+                }
+            });
+
+            $('#changeRows').on('change', function() {
+                table.updateRowsPerPage(parseInt($(this).val(), 10));
+            })
+
+            $('#rerender').click(function() {
+                table.refresh(true);
+            })
+
+            $('#distory').click(function() {
+                table.distroy();
+            })
+
+            $('#refresh').click(function() {
+                table.refresh();
+            })
+
+            $('#setPage2').click(function() {
+                table.setPage(1);
+            })
+
+
+        })
+
+
+    </script>
+</body>
+</html>
