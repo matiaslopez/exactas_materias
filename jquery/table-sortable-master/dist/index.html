@@ -60,12 +60,34 @@
         parser.parse(spreadsheetId).then((items) => {
           // items should be [{ a: 1, b: 2, c: 3 },{ a: 4, b: 5, c: 6 },{ a: 7, b: 8, c: 9 }]
             //console.log(items);
-            data_sp = items;
+// Asignatura
+// Turno
+// Docente
+// Día
+// Fecha
+// Desde
+// Hasta
+// Pab.
+// Aula
 
-            $.each(data_sp, function( index, value ) {
+            data_sp = {};
+            console.log(items[0]);
+            console.log(items[1]);
+            $.each(items, function( index, value ) {
+                data_sp[index] = {}
                 $.each(columns, function(id, va) {
-                    data_sp[index][va] = value[va] || "-"
+                    if (va.includes("Asignatura")){
+                        console.log("|" + va + "|", Object.keys(value));
+                        console.log("|" + value[va] + "|--");
+                        data_sp[index]["Asignatura"] = value[va] || "*";
+                    } else {
+                        // data_sp[index][va] = value[va] || "*";
+                        console.log("False:" + va)
+                    }
+                    
                 })
+                console.log("Done:")
+                console.log(data_sp[index])
             });
 
               var table = $('#root').tableSortable({
