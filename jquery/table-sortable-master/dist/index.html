@@ -56,42 +56,49 @@
         // https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/pubhtml?widget=true&headers=false
         const spreadsheetId = '1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY'
         const parser = new PublicGoogleSheetsParser()
-        var data_sp = [];
-        parser.parse(spreadsheetId).then((items) => {
-          // items should be [{ a: 1, b: 2, c: 3 },{ a: 4, b: 5, c: 6 },{ a: 7, b: 8, c: 9 }]
-            //console.log(items);
-// Asignatura
-// Turno
-// Docente
-// Día
-// Fecha
-// Desde
-// Hasta
-// Pab.
-// Aula
+        var data_sp = {};
 
-            data_sp = {};
-            console.log(items[0]);
-            console.log(items[1]);
-            $.each(items, function( index, value ) {
-                data_sp[index] = {}
-                $.each(columns, function(id, va) {
-                    if (va.includes("Asignatura")){
-                        console.log("|" + va + "|", Object.keys(value));
-                        console.log("|" + value[va] + "|--");
-                        data_sp[index]["Asignatura"] = value[va] || "*";
-                    } else {
-                        // data_sp[index][va] = value[va] || "*";
-                        console.log("False:" + va)
-                    }
-                    
-                })
-                console.log("Done:")
-                console.log(data_sp[index])
+        const sheets = ["LUNES 1C", "MARTES 1C", "MIERCOLES 1C", "JUEVES 1C", "VIERNES 1C", "SABADO 1C"]
+        var data_sp = [];
+        $.each(sheets, function (idx, sh) {
+            console.log(sh);
+            parser.parse(spreadsheetId, sh).then((items) => {
+              // items should be [{ a: 1, b: 2, c: 3 },{ a: 4, b: 5, c: 6 },{ a: 7, b: 8, c: 9 }]
+                //console.log(items);
+
+                $.each(items, function( index, value ) {
+                    index = data_sp.length
+                    data_sp[index] = {}
+                    $.each(value, function(id, va) {
+
+                        if (id.includes("Asignatura")){
+
+                            data_sp[index]["Asignatura"] = va || "*";
+                        } else {
+                            if (id.includes("Desde") || id.includes("Hasta")) {
+                                const match = va.match(/\d+/g);
+                                const dateObj = new Date(...match);
+                                const hours = dateObj.getHours().toString().padStart(2, '0');
+                                const minutes = dateObj.getMinutes().toString().padStart(2, '0');
+                                data_sp[index][id] = `${hours}:${minutes}` || "*";
+                            } else {
+                                data_sp[index][id] = va || "*";
+                            }
+                        }
+
+                    })
+                    $.each(columns, function(v) {
+                        data_sp[index][v] = data_sp[index][v] || "-"
+                    })
+                    // console.log("Done:")
+                    // console.log(data_sp[index])
+                });
             });
+        })
+
 
               var table = $('#root').tableSortable({
-                data: data_sp,
+                data: data_sp.slice(0,30),
                 columns: columns,
                 searchField: '#searchField',
                 responsive: {
@@ -137,8 +144,8 @@
                 table.setPage(1);
             })
 
+        // })
 
-        })
 
 
     </script>
