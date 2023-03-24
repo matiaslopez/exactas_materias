@@ -92,13 +92,15 @@
                     })
                     // console.log("Done:")
                     // console.log(data_sp[index])
+                    // table.addRow(data_sp[index]);
+
                 });
             });
         })
 
 
               var table = $('#root').tableSortable({
-                data: data_sp.slice(0,30),
+                data: data_sp,
                 columns: columns,
                 searchField: '#searchField',
                 responsive: {
