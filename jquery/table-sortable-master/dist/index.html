@@ -60,46 +60,8 @@
 
         const sheets = ["LUNES 1C", "MARTES 1C", "MIERCOLES 1C", "JUEVES 1C", "VIERNES 1C", "SABADO 1C"]
         var data_sp = [];
-        $.each(sheets, function (idx, sh) {
-            console.log(sh);
-            parser.parse(spreadsheetId, sh).then((items) => {
-              // items should be [{ a: 1, b: 2, c: 3 },{ a: 4, b: 5, c: 6 },{ a: 7, b: 8, c: 9 }]
-                //console.log(items);
 
-                $.each(items, function( index, value ) {
-                    index = data_sp.length
-                    data_sp[index] = {}
-                    $.each(value, function(id, va) {
-
-                        if (id.includes("Asignatura")){
-
-                            data_sp[index]["Asignatura"] = va || "*";
-                        } else {
-                            if (id.includes("Desde") || id.includes("Hasta")) {
-                                const match = va.match(/\d+/g);
-                                const dateObj = new Date(...match);
-                                const hours = dateObj.getHours().toString().padStart(2, '0');
-                                const minutes = dateObj.getMinutes().toString().padStart(2, '0');
-                                data_sp[index][id] = `${hours}:${minutes}` || "*";
-                            } else {
-                                data_sp[index][id] = va || "*";
-                            }
-                        }
-
-                    })
-                    $.each(columns, function(v) {
-                        data_sp[index][v] = data_sp[index][v] || "-"
-                    })
-                    // console.log("Done:")
-                    // console.log(data_sp[index])
-                    // table.addRow(data_sp[index]);
-
-                });
-            });
-        })
-
-
-            var table = $('#root').tableSortable({
+        var table = $('#root').tableSortable({
                 data: data_sp,
                 columns: columns,
                 searchField: '#searchField',
@@ -146,25 +108,68 @@
                 table.setPage(1);
             })
 
+
+        $.each(sheets, function (idx, sh) {
+            console.log(sh);
+            parser.parse(spreadsheetId, sh).then((items) => {
+              // items should be [{ a: 1, b: 2, c: 3 },{ a: 4, b: 5, c: 6 },{ a: 7, b: 8, c: 9 }]
+                //console.log(items);
+
+                $.each(items, function( index, value ) {
+                    index = data_sp.length
+                    current = {}
+                    $.each(value, function(id, va) {
+
+                        if (id.includes("Asignatura")){
+
+                            current["Asignatura"] = va || "*";
+                        } else {
+                            if (id.includes("Desde") || id.includes("Hasta")) {
+                                const match = va.match(/\d+/g);
+                                const dateObj = new Date(...match);
+                                const hours = dateObj.getHours().toString().padStart(2, '0');
+                                const minutes = dateObj.getMinutes().toString().padStart(2, '0');
+                                current[id] = `${hours}:${minutes}` || "*";
+                            } else {
+                                current[id] = va || "*";
+                            }
+                        }
+
+                    })
+                    $.each(columns, function(v) {
+                        current[v] = current[v] || "-"
+                    })
+                    // console.log("Done:")
+                    // console.log(data_sp[index])
+                    // table.addRow(data_sp[index]);
+                    data_sp.push(current)
+
+                });
+                table.setData(data_sp, columns);
+            });
+        })
+
+
+
         // })
 
 // // primer fragmento de código
-// function primerFragmento(callback) {
-//   // código del primer fragmento
+function primerFragmento(callback) {
+   // código del primer fragmento
 
 //   // llamada a la función de callback
-//   callback();
-// }
+  callback();
+}
 
-// // segundo fragmento de código
-// function segundoFragmento() {
-//   // código del segundo fragmento
-// }
+// segundo fragmento de código
+function segundoFragmento() {
+  // código del segundo fragmento
+}
 
-// // llamada a los fragmentos de código en secuencia
-// primerFragmento(function() {
-//   segundoFragmento();
-// });
+// llamada a los fragmentos de código en secuencia
+primerFragmento(function() {
+  segundoFragmento();
+});
 
     </script>
 </body>

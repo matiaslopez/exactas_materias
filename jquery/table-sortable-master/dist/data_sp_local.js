@@ -78,6 +78,7 @@ var columns = {
     'Asignatura': 'Asignatura',
     'Concepto': 'Concepto',
     'Turno': 'Turno',
+    'Docente': 'Docente',
     'Fecha': 'Fecha',
     'Día': 'Día',
     'Desde': 'Desde',
